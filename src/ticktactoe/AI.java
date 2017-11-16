@@ -59,14 +59,14 @@ public class AI {
 		Random rand = new Random();
 		float randNum = rand.nextFloat();
 		if(Game.log.size() <8){
-		if(Game.log.size() %2 == 0){
-			try {
+			if(Game.log.size() %2 == 0){
+				//try {
 				String fileName = "TTT";
 				/*
 				for (int y=0; y<Game.log.size(); y++){
 					fileName += Game.log.get(y).toString();
 				}
-				*/
+				 */
 				for (int y = 1; y<=9; y++){
 					if (Game.log.contains(y)){
 						if (Game.log.indexOf(y)%2==0){
@@ -78,7 +78,8 @@ public class AI {
 						fileName += "-";
 					}
 				}
-				fileName += ".txt";
+				weight[Game.log.size()/2] = (double[]) Game.storer.get(fileName);
+				/*fileName += ".txt";
 				BufferedReader brMove = new BufferedReader(new FileReader(fileName));
 			    String line = brMove.readLine();
 			    int counterCol = 0;
@@ -104,14 +105,18 @@ public class AI {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				localWeightSet(Game.log.size()/2);
-			}
-			for(int x = 0; x<weight[Game.log.size()/2].length; x++){
-				randNum -= weight[Game.log.size()/2][x];
-				if (randNum<=.01){
-					return x+1;
+			}*/
+				if(weight[Game.log.size()/2] != null){
+					for(int x = 0; x<weight[Game.log.size()/2].length; x++){
+						randNum -= weight[Game.log.size()/2][x];
+						if (randNum<=.01){
+							return x+1;
+						}
+					}
+				} else{
+					localWeightSet(Game.log.size()/2);
 				}
 			}
-		}
 		} 
 		return rand.nextInt(9)+1;
 	}
@@ -135,9 +140,9 @@ public class AI {
 		//System.out.println(weight[layer][place-1]);
 		for(int n = 0; n < weight[0].length; n++){
 			weight[layer][n] -= balanceValue;
-			if (weight[layer][n]<0.001){
+			if (weight[layer][n]<0.01){
 				//weight[layer][highestWeight(layer)] += (weight[layer][n]-.01)*-1;
-				weight[layer][n] = 0.001;
+				weight[layer][n] = 0.01;
 			}
 			if (Game.log.indexOf(n+1) != -1 && Game.log.indexOf(n+1) <layer*2){
 				weight[layer][n] = 0;
@@ -200,7 +205,8 @@ public class AI {
 						fileName += "-";
 					}
 				}
-				fileName += ".txt";
+				Game.storer.put(fileName, weight[x]);
+				/*fileName += ".txt";
 				File logFile = new File(fileName);
 				try {
 					//System.out.println(logFile.getCanonicalPath());
@@ -214,7 +220,7 @@ public class AI {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				}*/
 			}
 		}
 		/*for (int x=0; x<Game.log.size(); x++){
@@ -237,8 +243,11 @@ public class AI {
 		}*/
 	}
 	private void localWeightSet(int x){
-			for(int y = 0; y < weight[x].length; y++){
-				weight[x][y] = .112;
+		System.out.println("resetting weight");
+		double[] newWeight = new double[9];
+		for(int y = 0; y < 9; y++){
+			newWeight[y] = .112;
 		}
+		weight[x] = newWeight;
 	}
 }

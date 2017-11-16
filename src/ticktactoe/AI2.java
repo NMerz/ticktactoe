@@ -25,23 +25,25 @@ public class AI2 {
 		Random rand = new Random();
 		float randNum = rand.nextFloat();
 		if(Game.log.size() <8){
-		if(Game.log.size() %2 == 1){
-			try {
-				String fileName = "TTT";
-				/*for (int y=0; y<Game.log.size(); y++){
+			if(Game.log.size() %2 == 1){
+				//try {
+					String fileName = "TTT";
+					/*for (int y=0; y<Game.log.size(); y++){
 					fileName += Game.log.get(y).toString();
 				}*/
-				for (int y = 1; y<=9; y++){
-					if (Game.log.contains(y)){
-						if (Game.log.indexOf(y)%2==0){
-							fileName += "x";
-						}else{
-							fileName+= "o";
+					for (int y = 1; y<=9; y++){
+						if (Game.log.contains(y)){
+							if (Game.log.indexOf(y)%2==0){
+								fileName += "x";
+							}else{
+								fileName+= "o";
+							}
+						} else{
+							fileName += "-";
 						}
-					} else{
-						fileName += "-";
 					}
-				}
+					weight[Game.log.size()/2] = (double[]) Game.storer.get(fileName);
+					/*
 				fileName += ".txt";
 				BufferedReader brMove = new BufferedReader(new FileReader(fileName));
 			    String line = brMove.readLine();
@@ -68,17 +70,21 @@ public class AI2 {
 			} catch (IOException e) {
 				e.printStackTrace();
 				localWeightSet(Game.log.size()/2);
-			}
-			for(int x = 0; x<weight[Game.log.size()/2].length; x++){
-				randNum -= weight[Game.log.size()/2][x];
-				if (randNum<=.01){
-					return x+1;
+			}*/
+					if(weight[Game.log.size()/2] != null){
+						for(int x = 0; x<weight[Game.log.size()/2].length; x++){
+							randNum -= weight[Game.log.size()/2][x];
+							if (randNum<=.01){
+								return x+1;
+							}
+						}
+					} else{
+						localWeightSet(Game.log.size()/2);
+					}
 				}
-			}
+			} 
+			return rand.nextInt(9)+1;
 		}
-		} 
-		return rand.nextInt(9)+1;
-	}
 	public void aiRewright(int layer, int place, double value){
 		/*if (layer == 0){
 			value *= .15;
@@ -136,7 +142,9 @@ public class AI2 {
 					fileName += "-";
 				}
 			}
-			fileName += ".txt";
+			Game.storer.put(fileName, weight[x]);
+
+			/*fileName += ".txt";
 			File logFile = new File(fileName);
 			try {
 				writer = new BufferedWriter(new FileWriter(logFile));
@@ -148,12 +156,15 @@ public class AI2 {
 				writer.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
+			}*/
 		}
 	}
 	private void localWeightSet(int x){
-			for(int y = 0; y < weight[x].length; y++){
-				weight[x][y] = .112;
+		System.out.println("resetting weight");
+		double[] newWeight = new double[9];
+		for(int y = 0; y < 9; y++){
+			newWeight[y] = .112;
 		}
+		weight[x] = newWeight;
 	}
 }

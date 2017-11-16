@@ -2,17 +2,22 @@ package ticktactoe;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
 	static ArrayList<Integer> log = new ArrayList();
+	public static HashMap<String, double[]> storer = new HashMap<String, double[]>();
 	public static void main(String[] args) {
 		int gameCount = 0;
 		AI TTTAI = new AI();
 		AI2 TTTAI2 = new AI2();
 	    DecimalFormat fourDecimal = new DecimalFormat("0.0000");
 		boolean again = true;
+		boolean prompt = false;
+		boolean human1 = false;
+		boolean human2 = false;
 		Scanner test = new Scanner(System.in);
 		int move;
 		int moveY;
@@ -21,37 +26,49 @@ public class Game {
 		while (again == true){
 			log.clear();
 			TicTacToe game = new TicTacToe();
-			//game.printBoard();
+			if (human1 == true || human2 == true){
+				game.printBoard();
+			}
 			double reweightValue = .05;
 			boolean won = false;
 			while (game.checkForWin()==false && game.isBoardFull() == false){
 				//System.out.println(log);
 				if(game.getCurrentPlayerMark() == 'x'){
-					/*System.out.println("Next move:");
-					nextLine = test.next();
-					move = Integer.parseInt(nextLine);*/
-					move = TTTAI.aiMove();
+					if (human1 == false){
+						move = TTTAI.aiMove();
+					} else{
+						System.out.println("Next move:");
+						nextLine = test.next();
+						move = Integer.parseInt(nextLine);
+					}
 				} else{
-
-					move = TTTAI2.aiMove();
+					if (human2 == false){
+						move = TTTAI2.aiMove();
+					} else{
+						System.out.println("Next move:");
+						nextLine = test.next();
+						move = Integer.parseInt(nextLine);
+					}
 				}
 				moveY = (move-1)/3;
 				moveX = (move-1)%3;
 				if (game.placeMark(moveY, moveX) == true) {
 					log.add(move);
-					
-					//game.printBoard();//search anchor
+					if (human1 == true || human2 == true){
+						game.printBoard();//search anchor
+					}
 					//test.next();
 					game.changePlayer();
 				}
 			}
 			if (game.checkForWin()) {
 				//test.next();
-				//System.out.println("We have a winner! Congrats" + game.getWinnerMark() + "!");
-				//if (game.getWinnerMark() == 'o'){
-					System.out.println(game.getWinnerMark());
+				//System.out.println("We have a winner! Congrats" + game.getWinnerMark() + "!")
+				System.out.println(game.getWinnerMark());
+
+				if (game.getWinnerMark() == 'o'){
 					reweightValue *= -1;
-				//}
+				}
 				won = true;
 			}
 			else if (game.isBoardFull()) {
@@ -61,6 +78,10 @@ public class Game {
 				won = true;
 			}
 			if (won==true){
+				gameCount++;
+				if (gameCount%100000 == 0){
+					prompt = true;
+				}
 				boolean logLengthDecreased = false;
 				int logLength = log.size();
 				if(logLength%2 == 0){
@@ -93,11 +114,23 @@ public class Game {
 				if (nextLine.contains("n")){
 					again = false;
 				}*/
-			}
-			gameCount++;
-			if (gameCount%30000 == 0){
-				System.out.println("continue?");
-				test.next();
+				if (prompt == true || human1 == true || human2 == true){
+					System.out.println("continue?");
+					String answer = test.next();
+					if(answer.contains("no")){
+						again = false;
+					} else if(answer.contains("human1")){
+						human1 = true;
+					} else if(answer.contains("computer1")){
+						human1 = false;
+					} else if(answer.contains("human2")){
+						human2 = true;
+					} else if(answer.contains("computer2")){
+						human2 = false;
+					} else if (answer.contains("yes")){
+						prompt = false;
+					}
+				}
 			}
 		}
 	}
